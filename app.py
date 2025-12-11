@@ -26,7 +26,6 @@ DEFAULT_PARAMS = dict(
 # not actually secret, it is stored as part of the hash as well
 SALT = base64.b64decode("2p4gW1kQc3+daOMV7G50NA==")
 
-
 # same as in the desktop app
 def compute_hash(uid):
     uid = str(int(uid, 16))
@@ -39,7 +38,6 @@ def compute_hash(uid):
         .replace(b",", b"__")
         .decode()
     )
-
 
 # define a parser class from standard library
 # can be used a library for easier parsing
@@ -89,9 +87,7 @@ class OdtuParser(HTMLParser):
         if tag == "button":
             self._in_submit_btn = False
 
-
 app = flask.Flask(__name__)
-
 
 def captcha():
     # create a session
