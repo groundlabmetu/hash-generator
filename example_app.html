@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ODTÜCard Auth Example</title>
+    <script>
+        async function fetchAuth() {
+            // Fetch token, captcha image, and cookies from the server
+            const response = await fetch('/captcha', { method: 'POST' });
+            const data = await response.json();
+
+            // Populate the form fields with the fetched data
+            document.getElementById('token').value = data.token;
+            document.getElementById('captcha_img').src = 'data:image/jpeg;base64,' + data.captcha_img;
+            document.getElementById('cookies').value = JSON.stringify(data.cookies);
+        }
+
+        async function submitForm(event) {
+            // Prevent default form submission
+            event.preventDefault();
+
+            // Submit the form data to the server
+            const formData = new FormData(document.getElementById('authForm'));
+            const response = await fetch('/fetch_hash', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+
+            // Display the result on the page
+            document.getElementById('result').innerText = result['ret'];
+
+            // Display uid
+            document.getElementById('uid').innerText = result['uid'] || 'N/A';
+
+            // Display hash
+            document.getElementById('hash').innerText = result['hash'] || 'N/A';
+
+            // Refresh captcha after submission
+            fetchAuth();
+        }
+
+        window.onload = fetchAuth;
+    </script>
+</head>
+
+<body>
+    <h1>ODTÜCard Auth Example</h1>
+    <form id="authForm" onsubmit="submitForm(event)">
+        <label for="sid">Student number:</label><br>
+        <input type="text" id="sid" name="sid" required><br>
+        <input type="hidden" id="token" name="token"><br>
+        <img id="captcha_img" alt="Captcha Image"><br>
+        <label for="captcha">Enter Captcha:</label><br>
+        <input type="text" id="captcha" name="captcha" required><br><br>
+        <input type="hidden" id="cookies" name="cookies"><br>
+        <input type="submit" value="Submit">
+    </form>
+    <h2>Result:</h2>
+    <pre id="result"></pre>
+    <h2>UID:</h2>
+    <pre id="uid"></pre>
+    <h2>Hash:</h2>
+    <pre id="hash"></pre>
+</body>
+
+</html>
